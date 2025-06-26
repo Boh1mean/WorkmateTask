@@ -6,6 +6,13 @@ import (
 	"github.com/Boh1mean/workmateTask/internal/model"
 )
 
+type TaskStorage interface {
+	CreateTask(task *model.Task) error
+	GetTask(id string) (*model.Task, bool)
+	DeleteTask(id string) error
+	SetStatus(id string, status string) bool
+}
+
 type MemoryStore struct {
 	tasks map[string]*model.Task
 	mu    sync.RWMutex
@@ -37,4 +44,16 @@ func (ms *MemoryStore) DeleteTask(id string) {
 	ms.mu.Lock()
 	defer ms.mu.Unlock()
 	delete(ms.tasks, id)
+}
+
+func (ms *MemoryStore) SetStatus(id string, status string) bool {
+	ms.mu.Lock()
+	defer ms.mu.Unlock()
+	task, ok := ms.tasks[id]
+	if !ok {
+		return false
+	}
+
+	task.Status = status
+	return true
 }
