@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"time"
@@ -41,4 +42,21 @@ func (s *TaskService) NewTask() *model.Task {
 	}()
 
 	return task
+}
+
+func (s *TaskService) GetTask(id string) (*model.Task, bool) {
+	task, ok := s.store.GetTask(id)
+	if !ok {
+		return nil, false
+	}
+
+	return task, true
+}
+
+func (s *TaskService) DeleteTask(id string) error {
+	if err := s.store.DeleteTask(id); err != nil {
+		return fmt.Errorf("failed to delete task: %w", err)
+	}
+
+	return nil
 }

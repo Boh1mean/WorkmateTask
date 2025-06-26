@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/Boh1mean/workmateTask/internal/model"
@@ -40,10 +41,16 @@ func (ms *MemoryStore) GetTask(id string) (*model.Task, bool) {
 	return task, ok
 }
 
-func (ms *MemoryStore) DeleteTask(id string) {
+func (ms *MemoryStore) DeleteTask(id string) error {
 	ms.mu.Lock()
 	defer ms.mu.Unlock()
+	if _, ok := ms.tasks[id]; !ok {
+		return fmt.Errorf("task with id %s not found", id)
+	}
+
 	delete(ms.tasks, id)
+
+	return nil
 }
 
 func (ms *MemoryStore) SetStatus(id string, status string) bool {
