@@ -10,6 +10,12 @@ import (
 	"github.com/google/uuid"
 )
 
+type TaskUsecase interface {
+	NewTask() *model.Task
+	GetTask(id string) (*model.Task, bool)
+	DeleteTask(id string) error
+}
+
 type TaskService struct {
 	store TaskStorage
 }
